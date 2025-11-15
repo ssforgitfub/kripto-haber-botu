@@ -1,4 +1,4 @@
-python-telegram-bot==21.7
+python-telegram-bot[job-queue]==21.7
 requests
 beautifulsoup4
 googletrans-py==4.0.0
