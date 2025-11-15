@@ -45,7 +45,6 @@ def get_channel_posts(username):
                 content = f"{text}{link}"
                 hash_id = hashlib.md5(content.encode()).hexdigest()
                 
-                # ZATEN VAR MI?
                 cursor.execute("SELECT 1 FROM seen WHERE hash=?", (hash_id,))
                 if cursor.fetchone():
                     continue
@@ -83,6 +82,23 @@ async def haber_gonder(context: ContextTypes.DEFAULT_TYPE):
                 parse_mode='Markdown',
                 disable_web_page_preview=False
             )
-            # CACHE'E EKLE
             cursor.execute("INSERT INTO seen (hash, timestamp) VALUES (?, ?)", 
-                         (
+                         (item["hash"], int(time.time())))
+            db.commit()
+            time.sleep(3)
+        except Exception as e:
+            print(f"Gönderim hatası: {e}")
+
+async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Test ediliyor...")
+    await haber_gonder(context)
+
+def main():
+    app = Application.builder().token(TOKEN).build()
+    app.job_queue.run_repeating(haber_gonder, interval=600, first=10)
+    app.add_handler(CommandHandler("test", test))
+    print("Bot çalışıyor... Her 10 dakikada bir haber kontrol ediliyor.")
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
