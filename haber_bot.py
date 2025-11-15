@@ -33,6 +33,13 @@ def get_channel_posts(username):
             link_tag = post.find('a', class_='tgme_widget_message_date')
             if text_div and link_tag:
                 text = text_div.get_text().strip()
+                
+                # TEMİZLEME: "Telegram |heyecan" vs. kaldır
+                text = text.split("Telegram |")[0].strip()
+                text = text.split("https://t.me/")[0].strip()
+                text = text.split("t.me/")[0].strip()
+                text = ' '.join(text.split())
+                
                 link = "https://t.me" + link_tag['href']
                 content = f"{text}{link}"
                 hash_id = hashlib.md5(content.encode()).hexdigest()
@@ -41,7 +48,8 @@ def get_channel_posts(username):
                     continue
                 posts.append({"text": text, "link": link, "hash": hash_id, "source": username})
         return posts
-    except:
+    except Exception as e:
+        print(f"Scraping hatası ({username}): {e}")
         return []
 
 def get_news():
@@ -63,7 +71,7 @@ async def haber_gonder(context: ContextTypes.DEFAULT_TYPE):
             message = (
                 f"*{item['source_name']}*\n\n"
                 f"*{tr_text}*\n\n"
-                f"[Kaynak]({item['link']})"
+                f"Kaynak: {item['link']}"
             )
             await context.bot.send_message(
                 chat_id=GROUP_CHAT_ID,
