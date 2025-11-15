@@ -2,6 +2,7 @@ import os
 import time
 import hashlib
 import sqlite3
+import asyncio
 import requests
 from bs4 import BeautifulSoup
 from googletrans import Translator
@@ -82,12 +83,12 @@ async def test(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Test ediliyor...")
     await haber_gonder(context)
 
-def main():
+async def main():
     app = Application.builder().token(TOKEN).build()
     app.job_queue.run_repeating(haber_gonder, interval=600, first=10)
     app.add_handler(CommandHandler("test", test))
     print("Bot çalışıyor... Her 10 dakikada bir haber kontrol ediliyor.")
-    app.run_polling()
+    await app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
