@@ -1,5 +1,5 @@
-python-telegram-bot==20.8
+python-telegram-bot==21.7
 requests
 beautifulsoup4
+googletrans-py==4.0.0
 lxml
-git+https://github.com/StarkBotsIndustries/googletrans.git
